@@ -24,7 +24,7 @@ func contains(s []string, e string) bool {
 }
 
 func main() {
-  f, err := os.Open("input.txt")
+  f, err := os.Open("input02.txt")
   check(err)
   orizontalMovements := [1]string{"forward"}
   verticalMovements := [2]string{"up","down"}
@@ -32,6 +32,7 @@ func main() {
   scanner := bufio.NewScanner(f)
 
   horizontal := 0
+  aim := 0
   depth := 0
 
   for scanner.Scan() {
@@ -43,15 +44,16 @@ func main() {
 
     if contains(orizontalMovements[:], movement) {
       horizontal += value
+      depth += aim * value
     } else if contains(verticalMovements[:], movement) {
       if movement == verticalMovements[0] {
-        depth -= value
+        aim -= value
       } else {
-        depth += value
+        aim += value
       }
     }
 
-    fmt.Printf("Horizontal position: %d, vertical position: %d\n", horizontal, depth)
+    fmt.Printf("Horizontal position: %d, current aim: %d, vertical position: %d\n", horizontal, aim, depth)
   }
 
   fmt.Printf("Totals multiplied: %d\n", horizontal * depth)
