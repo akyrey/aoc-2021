@@ -7,6 +7,12 @@ import (
   "strconv"
 )
 
+func check(e error) {
+  if e != nil {
+    panic(e)
+  }
+}
+
 func contains(s []int, e int) bool {
   for _, a := range s {
     if a == e {
@@ -16,14 +22,8 @@ func contains(s []int, e int) bool {
   return false
 }
 
-func check(e error) {
-  if e != nil {
-    panic(e)
-  }
-}
-
 func main() {
-  f, err := os.Open("input.txt")
+  f, err := os.Open("input01.txt")
   check(err)
 
   scanner := bufio.NewScanner(f)
