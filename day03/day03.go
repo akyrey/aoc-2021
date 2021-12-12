@@ -1,11 +1,12 @@
 package main
 
 import (
-  "bufio"
-  "fmt"
-  "os"
-  "strconv"
-  "strings"
+	"bufio"
+	"fmt"
+	"math"
+	"os"
+	"strconv"
+	"strings"
 )
 
 func check(e error) {
@@ -18,7 +19,7 @@ func arrayToString(a []int, delim string) string {
   return strings.Trim(strings.Join(strings.Fields(fmt.Sprint(a)), delim), "[]")
 }
 
-func calculateRate(totalCount int, reportBitSum []int, mostCommon bool) int {
+func calculateRate(totalCount int, reportBitSum []int, mostCommon bool) []int {
   rate := make([]int, len(reportBitSum), cap(reportBitSum))
 
   for i := 0; i < len(reportBitSum); i++ {
@@ -32,6 +33,10 @@ func calculateRate(totalCount int, reportBitSum []int, mostCommon bool) int {
     rate[i] = value
   }
 
+  return rate
+}
+
+func calculateDecimalRate(rate []int) int {
   binaryValue := arrayToString(rate[:], "")
   decimalValue, err := strconv.ParseInt(binaryValue, 2, 64)
   check(err)
@@ -40,7 +45,7 @@ func calculateRate(totalCount int, reportBitSum []int, mostCommon bool) int {
 }
 
 func getMostCommonBit(totalCount int, value int) int {
-  zeroValueLimit := totalCount / 2;
+  zeroValueLimit := int(math.Round(float64(totalCount) / 2.0));
 
   if value < zeroValueLimit {
     return 0
@@ -50,7 +55,7 @@ func getMostCommonBit(totalCount int, value int) int {
 }
 
 func getLeastCommonBit(totalCount int, value int) int {
-  zeroValueLimit := totalCount / 2;
+  zeroValueLimit := int(math.Round(float64(totalCount) / 2.0));
 
   if value < zeroValueLimit {
     return 1
@@ -59,20 +64,67 @@ func getLeastCommonBit(totalCount int, value int) int {
   return 0
 }
 
+func sumReportValues(reports [][]int, length int) []int {
+  reportBitSum := make([]int, length, length)
+
+  for _, v := range reports {
+    for i := 0; i < length; i++ {
+      reportBitSum[i] += v[i]
+    }
+  }
+
+  return reportBitSum
+}
+
+func filterReportsByBitInPosition(reports [][]int, position int, mostCommon bool) [][]int {
+  result := [][]int{}
+  length := len(reports)
+  // fmt.Printf("length %d ", length)
+  sumReport := sumReportValues(reports, len(reports[0]))
+  // fmt.Printf("sum report %v ", sumReport)
+  filter := calculateRate(length, sumReport, mostCommon)
+  // fmt.Printf("filter %v", filter)
+
+  for _, v := range reports {
+    if v[position] == filter[position] {
+      result = append(result, v)
+    }
+  }
+
+  return result
+}
+
+func filterByBit(reports [][]int, length int, mostCommon bool) []int {
+  result := reports[:]
+
+  for position := 0; position < length; position++ {
+    if len(result) != 1 {
+      result = filterReportsByBitInPosition(result, position, mostCommon)
+    }
+    // fmt.Printf("Position: %d, values: %v\n", position, result)
+  }
+
+  return result[0];
+}
+
 func main() {
   f, err := os.Open("input03.txt")
   check(err)
 
   scanner := bufio.NewScanner(f)
   totalCount := 0
+  var reportBit [][]int
   var reportBitSum []int
+  var length int
 
   for scanner.Scan() {
     line := scanner.Text()
     split := strings.Split(line, "")
+    length = len(split)
     if reportBitSum == nil {
-      reportBitSum = make([]int, len(split), len(split))
+      reportBitSum = make([]int, length, length)
     }
+    currentReport := make([]int, length, length)
 
     fmt.Printf("Split %v\n", split)
     for i := 0; i < len(split); i++ {
@@ -80,13 +132,34 @@ func main() {
       check(err)
 
       reportBitSum[i] += value
+      currentReport[i] = value
     }
 
+    reportBit = append(reportBit[:], currentReport)
     totalCount++
   }
 
-  gammaRate := calculateRate(totalCount, reportBitSum, true)
-  epsilonRate := calculateRate(totalCount, reportBitSum, false)
+  gammaRateBinary := calculateRate(totalCount, reportBitSum, true)
+  epsilonRateBinary := calculateRate(totalCount, reportBitSum, false)
 
-  fmt.Printf("Total lines: %d, reportBitSum: %v, gammaRate: %d, epsilonRate: %d, power consumption: %d\n", totalCount, reportBitSum, gammaRate, epsilonRate, gammaRate * epsilonRate)
+  gammaRate := calculateDecimalRate(gammaRateBinary)
+  epsilonRate := calculateDecimalRate(epsilonRateBinary)
+
+  fmt.Printf("Total lines: %d, reportBitSum: %v, gammaRate: %v, gammaRateDecimal: %d, epsilonRate: %v, epsilonRateDecimal: %d, power consumption: %d\n",
+    totalCount,
+    reportBitSum,
+    gammaRateBinary,
+    gammaRate,
+    epsilonRateBinary,
+    gammaRate,
+    gammaRate * epsilonRate,
+  )
+
+  oxygenRateBinary := filterByBit(reportBit, length, true)
+  co2RateBinary := filterByBit(reportBit, length, false)
+
+  oxygenRate := calculateDecimalRate(oxygenRateBinary)
+  co2Rate := calculateDecimalRate(co2RateBinary)
+ 
+  fmt.Printf("Oxygen generator rating: %v, decimal: %d, CO2 scrubber rating: %v, decimal: %d, life support rating: %d\n", oxygenRateBinary, oxygenRate, co2RateBinary, co2Rate, oxygenRate * co2Rate)
 }
