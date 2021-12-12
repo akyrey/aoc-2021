@@ -110,6 +110,7 @@ func filterByBit(reports [][]int, length int, mostCommon bool) []int {
 func main() {
   f, err := os.Open("input03.txt")
   check(err)
+  defer f.Close()
 
   scanner := bufio.NewScanner(f)
   totalCount := 0

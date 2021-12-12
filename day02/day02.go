@@ -26,6 +26,8 @@ func contains(s []string, e string) bool {
 func main() {
   f, err := os.Open("input02.txt")
   check(err)
+  defer f.Close()
+
   orizontalMovements := [1]string{"forward"}
   verticalMovements := [2]string{"up","down"}
 
