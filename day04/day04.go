@@ -101,8 +101,13 @@ func invertColsAndRows(board [][]int) (inverted [][]int) {
   return
 }
 
-func checkWinningBoard(boards [][][]int, extracted []int) (winners []int) {
+func checkWinningBoard(boards [][][]int, extracted []int, alreadyWon []int) (winners []int) {
+  winners = alreadyWon
   for index, board := range boards {
+    if contains(winners, index) {
+      continue
+    }
+
     invertedBoard := invertColsAndRows(board)
     fmt.Printf("board %v, inverted: %v\n", board, invertedBoard)
     for col := 0; col < 5; col++ {
@@ -137,18 +142,28 @@ func main() {
   var extracted []int
   var winners []int
 
-  fmt.Printf("Extractions: %v\nBoards: %v\n", extractions, boards)
+  fmt.Printf("Extractions: %v\nTotal boards: %d\nBoards: %v\n", extractions, len(boards), boards)
+  lastExtractionThatMadeABoardWin := -1
 
-  for _, extraction := range extractions {
+  for index, extraction := range extractions {
     extracted = append(extracted, extraction)
     fmt.Printf("Extracted %v\n", extracted)
-    winners = checkWinningBoard(boards, extracted)
+    latestWinner := -1
     if len(winners) > 0 {
-      fmt.Printf("Finished, winning boards %v, extracted %v\n", winners, extracted)
-      break
+      latestWinner = winners[len(winners) - 1]
+    }
+    winners = checkWinningBoard(boards, extracted, winners)
+    fmt.Printf("Winners after extraction %v\n", winners)
+    if len(winners) > 0 && winners[len(winners) - 1] != latestWinner {
+      lastExtractionThatMadeABoardWin = index
     }
   }
 
-  boardScore := calculateBoardScore(boards[winners[0]], extracted)
-  fmt.Printf("Board %d total score %d\n", winners[0], boardScore)
+  // We sum 1 since slice is excluding end value
+  lastExtractionThatMadeABoardWin += 1
+  fmt.Printf("Extractions to use %v\n", extracted[:lastExtractionThatMadeABoardWin])
+
+  lastWinningBoard := len(winners) - 1
+  boardScore := calculateBoardScore(boards[winners[lastWinningBoard]], extracted[0:lastExtractionThatMadeABoardWin])
+  fmt.Printf("Boards that have won: %d, total boards: %d, last winning board %d, total score %d\n", len(winners), len(boards), winners[lastWinningBoard], boardScore)
 }
