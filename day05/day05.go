@@ -112,7 +112,36 @@ func trackLine(line Line, diagram [][]int) [][]int {
     }
   }
 
+  // Diagonal lines
+  if line.start.x != line.end.x && line.start.y != line.end.y {
+    lenghtX := int(math.Abs(float64(line.start.x) - float64(line.end.x)))
+    lenghtY := int(math.Abs(float64(line.start.y) - float64(line.end.y)))
+
+    if lenghtX == lenghtY {
+      for row, col := line.start.x, line.start.y; isCycleEnded(row, line.start.x, line.end.x) && isCycleEnded(col, line.start.y, line.end.y); row, col = nextValue(row, line.start.x, line.end.x), nextValue(col, line.start.y, line.end.y) {
+        // fmt.Printf("This is a diagonal line, row: %d col: %d\n", row, col)
+        diagram[row][col]++
+      }
+    }
+  }
+
   return diagram
+}
+
+func isCycleEnded(current int, start int, end int) bool {
+  if start > end {
+    return end <= current
+  }
+
+  return end >= current
+}
+
+func nextValue(current int, start int, end int) int {
+  if start > end {
+    return current - 1
+  }
+
+  return current + 1
 }
 
 func main() {
