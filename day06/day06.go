@@ -42,31 +42,28 @@ func readFile(filename string) []int {
   return lanternFishes
 }
 
-func simulateDay(initialLanternFishes []int) (lanternFishes []int) {
-  var fishesToAdd []int
-  for _, countdown := range initialLanternFishes {
-    // Reset countdown to 6 and create a new lantern fish with a countdown of 8
-    if countdown == 0 {
-      lanternFishes = append(lanternFishes, 6)
-      fishesToAdd = append(fishesToAdd, 8)
-    } else {
-      // Simply decrement countdown
-      lanternFishes = append(lanternFishes, countdown - 1)
-    }
+func calculateChildren(daysUntilChildren int, daysLeft int) int {
+  daysUntilChildren += 1
+  if daysLeft < daysUntilChildren {
+    return 0
   }
 
-  return append(lanternFishes, fishesToAdd...)
+  acc := 0
+  for i := daysUntilChildren; i <= daysLeft; i += 7 {
+    acc += 1 + calculateChildren(8, daysLeft - i)
+  }
+
+  return acc
 }
 
 func main() {
-  lanternFishes := readFile("input06.txt")
+  lanternFishes := readFile("test06.txt")
   totalDays := 80
 
-  for day := 1; day <= totalDays; day++ {
-    lanternFishes = simulateDay(lanternFishes)
-
-    fmt.Printf("Lantern fishes after %d days: %v\n", day, lanternFishes)
+  totalFishes := len(lanternFishes)
+  for _, lanternFishCountdown := range lanternFishes {
+    totalFishes += calculateChildren(lanternFishCountdown, totalDays)
   }
 
-  fmt.Printf("Total lantern fishes after %d days: %d\n", totalDays, len(lanternFishes))
+  fmt.Printf("Total lantern fishes after %d days: %d\n", totalDays, totalFishes)
 }
