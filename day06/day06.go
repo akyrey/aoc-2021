@@ -57,12 +57,19 @@ func calculateChildren(daysUntilChildren int, daysLeft int) int {
 }
 
 func main() {
-  lanternFishes := readFile("test06.txt")
-  totalDays := 80
+  lanternFishes := readFile("input06.txt")
+  totalDays := 256
+
+  // Calculate children per starting value
+  fishingMap := make([]int, 9, 9)
+  for i := 1; i <= 8; i++ {
+    fishingMap[i] = calculateChildren(i, totalDays)
+  }
 
   totalFishes := len(lanternFishes)
   for _, lanternFishCountdown := range lanternFishes {
-    totalFishes += calculateChildren(lanternFishCountdown, totalDays)
+    // Sum children per starting value previously calculated, avoiding duplicated computations
+    totalFishes += fishingMap[lanternFishCountdown]
   }
 
   fmt.Printf("Total lantern fishes after %d days: %d\n", totalDays, totalFishes)
