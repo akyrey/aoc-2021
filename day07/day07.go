@@ -59,7 +59,10 @@ func calculateFuelSpent(positions []int, target int) int {
   fuel := 0
 
   for _, position := range positions {
-    fuel += int(math.Abs(float64(target) - float64(position)))
+    steps := int(math.Abs(float64(target) - float64(position)))
+    for i := 1; i <= steps; i++ {
+      fuel += i
+    }
   }
 
   return fuel
