@@ -1,76 +1,70 @@
-package main
+package day06
 
 import (
 	"bufio"
 	"fmt"
-	"os"
+	"github.com/akyrey/aoc-2021/utils"
 	"strconv"
 	"strings"
 )
 
-func check(e error) {
-  if e != nil {
-    panic(e)
-  }
-}
+func readFile(test bool) []int {
+	f, err := utils.GetFileToReadFrom(6, test)
+	utils.CheckError(err)
+	defer f.Close()
 
-func readFile(filename string) []int {
-  f, err := os.Open(filename)
-  check(err)
-  defer f.Close()
+	scanner := bufio.NewScanner(f)
+	var lanternFishes []int
 
-  scanner := bufio.NewScanner(f)
-  var lanternFishes []int
+	for scanner.Scan() {
+		line := scanner.Text()
+		fmt.Printf("Line read: %s\n", line)
 
-  for scanner.Scan() {
-    line := scanner.Text()
-    fmt.Printf("Line read: %s\n", line)
+		lanternFishesAsString := strings.Split(line, ",")
+		lanternFishes = make([]int, len(lanternFishesAsString))
 
-    lanternFishesAsString := strings.Split(line, ",")
-    lanternFishes = make([]int, len(lanternFishesAsString))
+		for i, stringValue := range lanternFishesAsString {
+			value, err := strconv.Atoi(stringValue)
+			utils.CheckError(err)
 
-    for i, stringValue := range lanternFishesAsString {
-      value, err := strconv.Atoi(stringValue)
-      check(err)
+			lanternFishes[i] = value
+		}
 
-      lanternFishes[i] = value
-    }
+		fmt.Printf("Initial lantern fishes array: %v\n", lanternFishes)
+	}
 
-    fmt.Printf("Initial lantern fishes array: %v\n", lanternFishes)
-  }
-
-  return lanternFishes
+	return lanternFishes
 }
 
 func calculateChildren(daysUntilChildren int, daysLeft int) int {
-  daysUntilChildren += 1
-  if daysLeft < daysUntilChildren {
-    return 0
-  }
+	daysUntilChildren += 1
+	if daysLeft < daysUntilChildren {
+		return 0
+	}
 
-  acc := 0
-  for i := daysUntilChildren; i <= daysLeft; i += 7 {
-    acc += 1 + calculateChildren(8, daysLeft - i)
-  }
+	acc := 0
+	for i := daysUntilChildren; i <= daysLeft; i += 7 {
+		acc += 1 + calculateChildren(8, daysLeft-i)
+	}
 
-  return acc
+	return acc
 }
 
-func main() {
-  lanternFishes := readFile("input06.txt")
-  totalDays := 256
+func Day06(test bool) {
+	lanternFishes := readFile(test)
+	totalDays := 256
 
-  // Calculate children per starting value
-  fishingMap := make([]int, 9, 9)
-  for i := 1; i <= 8; i++ {
-    fishingMap[i] = calculateChildren(i, totalDays)
-  }
+	// Calculate children per starting value
+	fishingMap := make([]int, 9, 9)
+	for i := 1; i <= 8; i++ {
+		fishingMap[i] = calculateChildren(i, totalDays)
+	}
 
-  totalFishes := len(lanternFishes)
-  for _, lanternFishCountdown := range lanternFishes {
-    // Sum children per starting value previously calculated, avoiding duplicated computations
-    totalFishes += fishingMap[lanternFishCountdown]
-  }
+	totalFishes := len(lanternFishes)
+	for _, lanternFishCountdown := range lanternFishes {
+		// Sum children per starting value previously calculated, avoiding duplicated computations
+		totalFishes += fishingMap[lanternFishCountdown]
+	}
 
-  fmt.Printf("Total lantern fishes after %d days: %d\n", totalDays, totalFishes)
+	fmt.Printf("Total lantern fishes after %d days: %d\n", totalDays, totalFishes)
 }

@@ -1,113 +1,107 @@
-package main
+package day07
 
 import (
 	"bufio"
 	"fmt"
+	"github.com/akyrey/aoc-2021/utils"
 	"math"
-	"os"
 	"strconv"
 	"strings"
 )
 
-func check(e error) {
-  if e != nil {
-    panic(e)
-  }
-}
+func readFile(test bool) []int {
+	f, err := utils.GetFileToReadFrom(7, test)
+	utils.CheckError(err)
+	defer f.Close()
 
-func readFile(filename string) []int {
-  f, err := os.Open(filename)
-  check(err)
-  defer f.Close()
+	scanner := bufio.NewScanner(f)
+	var positions []int
 
-  scanner := bufio.NewScanner(f)
-  var positions []int
+	for scanner.Scan() {
+		line := scanner.Text()
+		fmt.Printf("Line read: %s\n", line)
 
-  for scanner.Scan() {
-    line := scanner.Text()
-    fmt.Printf("Line read: %s\n", line)
+		positionsAsStrings := strings.Split(line, ",")
+		positions = make([]int, len(positionsAsStrings))
 
-    positionsAsStrings := strings.Split(line, ",")
-    positions = make([]int, len(positionsAsStrings))
+		for i, stringValue := range positionsAsStrings {
+			value, err := strconv.Atoi(stringValue)
+			utils.CheckError(err)
 
-    for i, stringValue := range positionsAsStrings {
-      value, err := strconv.Atoi(stringValue)
-      check(err)
+			positions[i] = value
+		}
 
-      positions[i] = value
-    }
+		fmt.Printf("Initial crab positions: %v\n", positions)
+	}
 
-    fmt.Printf("Initial crab positions: %v\n", positions)
-  }
-
-  return positions
+	return positions
 }
 
 func calculateMeanValue(positions []int) int {
-  sum := 0
-  for _, position := range positions {
-    sum += position
-  }
+	sum := 0
+	for _, position := range positions {
+		sum += position
+	}
 
-  mean := sum / len(positions)
-  fmt.Printf("Mean %d\n", mean)
+	mean := sum / len(positions)
+	fmt.Printf("Mean %d\n", mean)
 
-  return mean
+	return mean
 }
 
 func calculateFuelSpent(positions []int, target int) int {
-  fuel := 0
+	fuel := 0
 
-  for _, position := range positions {
-    steps := int(math.Abs(float64(target) - float64(position)))
-    for i := 1; i <= steps; i++ {
-      fuel += i
-    }
-  }
+	for _, position := range positions {
+		steps := int(math.Abs(float64(target) - float64(position)))
+		for i := 1; i <= steps; i++ {
+			fuel += i
+		}
+	}
 
-  return fuel
+	return fuel
 }
 
 func findPath(positions []int, target int, max int) int {
-  if target < 0 || target > max {
-    return int(math.MaxUint >> 1)
-  }
+	if target < 0 || target > max {
+		return int(math.MaxUint >> 1)
+	}
 
-  currentFuel := calculateFuelSpent(positions, target)
-  fmt.Printf("Fuel: %d, current target: %d\n", currentFuel, target)
+	currentFuel := calculateFuelSpent(positions, target)
+	fmt.Printf("Fuel: %d, current target: %d\n", currentFuel, target)
 
-  pathMin := calculateFuelSpent(positions, target - 1)
-  pathMaj := calculateFuelSpent(positions, target + 1)
-  
-  if currentFuel >= pathMin {
-    return findPath(positions, target - 1, max)
-  }
+	pathMin := calculateFuelSpent(positions, target-1)
+	pathMaj := calculateFuelSpent(positions, target+1)
 
-  if currentFuel >= pathMaj {
-    return findPath(positions, target + 1, max)
-  }
+	if currentFuel >= pathMin {
+		return findPath(positions, target-1, max)
+	}
 
-  return currentFuel
+	if currentFuel >= pathMaj {
+		return findPath(positions, target+1, max)
+	}
+
+	return currentFuel
 }
 
 func findMaxValue(positions []int) int {
-  max := 0
+	max := 0
 
-  for _, position := range positions {
-    if position > max {
-      max = position
-    }
-  }
+	for _, position := range positions {
+		if position > max {
+			max = position
+		}
+	}
 
-  return max
+	return max
 }
 
-func main() {
-  positions := readFile("input07.txt")
+func Day07(test bool) {
+	positions := readFile(test)
 
-  mean := calculateMeanValue(positions)
+	mean := calculateMeanValue(positions)
 
-  fuel := findPath(positions, mean, findMaxValue(positions))
+	fuel := findPath(positions, mean, findMaxValue(positions))
 
-  fmt.Printf("Fuel %d\n", fuel)
+	fmt.Printf("Fuel %d\n", fuel)
 }

@@ -1,62 +1,47 @@
-package main
+package day02
 
 import (
 	"bufio"
 	"fmt"
-	"os"
+	"github.com/akyrey/aoc-2021/utils"
 	"strconv"
 	"strings"
 )
 
-func check(e error) {
-  if e != nil {
-    panic(e)
-  }
-}
+func Day02(test bool) {
+	f, err := utils.GetFileToReadFrom(2, test)
+	utils.CheckError(err)
+	defer f.Close()
 
-func contains(s []string, e string) bool {
-  for _, a := range s {
-    if a == e {
-      return true
-    }
-  }
-  return false
-}
+	orizontalMovements := [1]string{"forward"}
+	verticalMovements := [2]string{"up", "down"}
 
-func main() {
-  f, err := os.Open("input02.txt")
-  check(err)
-  defer f.Close()
+	scanner := bufio.NewScanner(f)
 
-  orizontalMovements := [1]string{"forward"}
-  verticalMovements := [2]string{"up","down"}
+	horizontal := 0
+	aim := 0
+	depth := 0
 
-  scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		split := strings.Split(line, " ")
+		movement := split[0]
+		value, err := strconv.Atoi(split[1])
+		utils.CheckError(err)
 
-  horizontal := 0
-  aim := 0
-  depth := 0
+		if utils.Contains(orizontalMovements[:], movement) {
+			horizontal += value
+			depth += aim * value
+		} else if utils.Contains(verticalMovements[:], movement) {
+			if movement == verticalMovements[0] {
+				aim -= value
+			} else {
+				aim += value
+			}
+		}
 
-  for scanner.Scan() {
-    line := scanner.Text()
-    split := strings.Split(line, " ")
-    movement := split[0]
-    value, err := strconv.Atoi(split[1])
-    check(err)
+		fmt.Printf("Horizontal position: %d, current aim: %d, vertical position: %d\n", horizontal, aim, depth)
+	}
 
-    if contains(orizontalMovements[:], movement) {
-      horizontal += value
-      depth += aim * value
-    } else if contains(verticalMovements[:], movement) {
-      if movement == verticalMovements[0] {
-        aim -= value
-      } else {
-        aim += value
-      }
-    }
-
-    fmt.Printf("Horizontal position: %d, current aim: %d, vertical position: %d\n", horizontal, aim, depth)
-  }
-
-  fmt.Printf("Totals multiplied: %d\n", horizontal * depth)
+	fmt.Printf("Totals multiplied: %d\n", horizontal*depth)
 }

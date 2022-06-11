@@ -1,65 +1,50 @@
-package main
+package day01
 
 import (
-  "bufio"
-  "fmt"
-  "os"
-  "strconv"
+	"bufio"
+	"fmt"
+	"github.com/akyrey/aoc-2021/utils"
+	"strconv"
 )
 
-func check(e error) {
-  if e != nil {
-    panic(e)
-  }
-}
+func Day01(test bool) {
+	f, err := utils.GetFileToReadFrom(1, test)
+	utils.CheckError(err)
 
-func contains(s []int, e int) bool {
-  for _, a := range s {
-    if a == e {
-      return true
-    }
-  }
-  return false
-}
+	scanner := bufio.NewScanner(f)
+	var count int
+	prevValue := -1
+	currentWindow := []int{-1, -1, -1}
 
-func main() {
-  f, err := os.Open("input01.txt")
-  check(err)
+	for scanner.Scan() {
+		line := scanner.Text()
+		currentValue, err := strconv.Atoi(line)
+		utils.CheckError(err)
 
-  scanner := bufio.NewScanner(f)
-  var count int
-  prevValue := -1
-  currentWindow := []int{-1, -1, -1}
+		// Remove first array element
+		currentWindow = currentWindow[1:]
+		// Insert the newly read one as last element
+		currentWindow = append(currentWindow, currentValue)
+		if !utils.Contains(currentWindow, -1) {
+			acc := 0
+			for i := 0; i < len(currentWindow); i++ {
+				acc += currentWindow[i]
+			}
 
-  for scanner.Scan() {
-    line := scanner.Text()
-    currentValue, err := strconv.Atoi(line)
-    check(err)
+			fmt.Printf("Current window sum: %d", acc)
 
-    // Remove first array element
-    currentWindow = currentWindow[1:]
-    // Insert the newly read one as last element
-    currentWindow = append(currentWindow, currentValue)
-    if !contains(currentWindow, -1) {
-      acc := 0
-      for i := 0; i < len(currentWindow); i++ {
-        acc += currentWindow[i]
-      }
+			if prevValue != -1 && acc > prevValue {
+				fmt.Printf(" Increased\n")
+				count++
+			} else {
+				fmt.Printf("\n")
+			}
 
-      fmt.Printf("Current window sum: %d", acc)
+			prevValue = acc
+		}
+	}
 
-      if prevValue != -1 && acc > prevValue {
-        fmt.Printf(" Increased\n")
-        count++
-      } else {
-        fmt.Printf("\n")
-      }
+	fmt.Printf("Total increases: %d\n", count)
 
-      prevValue = acc
-    }
-  }
-
-  fmt.Printf("Total increases: %d\n", count)
-
-  f.Close()
+	f.Close()
 }
