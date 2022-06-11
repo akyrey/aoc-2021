@@ -32,39 +32,39 @@ func main() {
 			fmt.Println("Thanks for playing with us!")
 			os.Exit(0)
 		case 1:
-			fmt.Printf("Choosen day 1")
+			fmt.Println("Choosen day 1")
 			day01.Day01(test)
 			break
 		case 2:
-			fmt.Printf("Choosen day 2")
+			fmt.Println("Choosen day 2")
 			day02.Day02(test)
 			break
 		case 3:
-			fmt.Printf("Choosen day 3")
+			fmt.Println("Choosen day 3")
 			day03.Day03(test)
 			break
 		case 4:
-			fmt.Printf("Choosen day 4")
+			fmt.Println("Choosen day 4")
 			day04.Day04(test)
 			break
 		case 5:
-			fmt.Printf("Choosen day 5")
+			fmt.Println("Choosen day 5")
 			day05.Day05(test)
 			break
 		case 6:
-			fmt.Printf("Choosen day 6")
+			fmt.Println("Choosen day 6")
 			day06.Day06(test)
 			break
 		case 7:
-			fmt.Printf("Choosen day 7")
+			fmt.Println("Choosen day 7")
 			day07.Day07(test)
 			break
 		case 8:
-			fmt.Printf("Choosen day 8")
+			fmt.Println("Choosen day 8")
 			day08.Day08(test)
 			break
 		default:
-			fmt.Printf("Unknown day")
+			fmt.Println("Unknown day")
 		}
 	}
 }
