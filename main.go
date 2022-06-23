@@ -3,6 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"os"
+	"strconv"
+
 	"github.com/akyrey/aoc-2021/day01"
 	"github.com/akyrey/aoc-2021/day02"
 	"github.com/akyrey/aoc-2021/day03"
@@ -11,8 +14,7 @@ import (
 	"github.com/akyrey/aoc-2021/day06"
 	"github.com/akyrey/aoc-2021/day07"
 	"github.com/akyrey/aoc-2021/day08"
-	"os"
-	"strconv"
+	"github.com/akyrey/aoc-2021/day09"
 )
 
 func main() {
@@ -62,6 +64,10 @@ func main() {
 		case 8:
 			fmt.Println("Chosen day 8")
 			day08.Day08(test)
+			break
+		case 9:
+			fmt.Println("Chosen day 9")
+			day09.Day09(test)
 			break
 		default:
 			fmt.Println("Unknown day")
