@@ -3,6 +3,7 @@ package day10
 import (
 	"bufio"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/akyrey/aoc-2021/utils"
@@ -51,18 +52,39 @@ func isMatchingTag(stack []string, value string) bool {
 	return false
 }
 
-func readFile(test bool) []Corrupted {
+func completeLine(stack []string) []string {
+	result := make([]string, 0)
+
+	for i := len(stack) - 1; i >= 0; i-- {
+		switch stack[i] {
+		case OPEN_PARENTHESES:
+			result = append(result, CLOSE_PARENTHESES)
+		case OPEN_SQUARE:
+			result = append(result, CLOSE_SQUARE)
+		case OPEN_CURLY:
+			result = append(result, CLOSE_CURLY)
+		case OPEN_ANGLE:
+			result = append(result, CLOSE_ANGLE)
+		}
+	}
+
+	return result
+}
+
+func readFile(test bool) ([]Corrupted, []int) {
 	f, err := utils.GetFileToReadFrom(10, test)
 	utils.CheckError(err)
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
 	corrupted := make([]Corrupted, 0)
+	completionScores := make([]int, 0)
 
 	for scanner.Scan() {
 		line := scanner.Text()
 		values := strings.Split(line, "")
 		stack := make([]string, 0)
+		incomplete := true
 
 		for _, value := range values {
 			if utils.Contains(openings, value) {
@@ -71,12 +93,23 @@ func readFile(test bool) []Corrupted {
 				stack = stack[:len(stack)-1]
 			} else {
 				corrupted = append(corrupted, Corrupted{char: value, line: line})
+				incomplete = false
 				break
 			}
 		}
+
+		if incomplete {
+			completedLine := completeLine(stack)
+			fmt.Printf("Completed line %v\n", completedLine)
+			score := 0
+			for _, value := range completedLine {
+				score = (score * 5) + completeLineScore(value)
+			}
+			completionScores = append(completionScores, score)
+		}
 	}
 
-	return corrupted
+	return corrupted, completionScores
 }
 
 func syntaxErrorValue(value string) int {
@@ -94,6 +127,21 @@ func syntaxErrorValue(value string) int {
 	return 0
 }
 
+func completeLineScore(value string) int {
+	switch value {
+	case CLOSE_PARENTHESES:
+		return 1
+	case CLOSE_SQUARE:
+		return 2
+	case CLOSE_CURLY:
+		return 3
+	case CLOSE_ANGLE:
+		return 4
+	}
+
+	return 0
+}
+
 func calcSyntaxError(corrupted []Corrupted) int {
 	sum := 0
 
@@ -105,11 +153,16 @@ func calcSyntaxError(corrupted []Corrupted) int {
 }
 
 func Day10(test bool) {
-	corrupted := readFile(test)
+	corrupted, completionScores := readFile(test)
 
 	fmt.Printf("Corrupted lines: %#v\n", corrupted)
 
 	total := calcSyntaxError(corrupted)
 
 	fmt.Printf("Total syntax error %d\n", total)
+
+	sort.Ints(completionScores)
+	middleScore := completionScores[len(completionScores)/2]
+
+	fmt.Printf("Middle score %d\n", middleScore)
 }
