@@ -3,6 +3,7 @@ package day09
 import (
 	"bufio"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -24,12 +25,7 @@ func readLine(line string) []int {
 }
 
 func readBuffer(line string, matrix [][]int, index int) [][]int {
-	matrix = append(matrix, readLine(line))
-	if len(matrix) > 3 {
-		return matrix[len(matrix)-3:]
-	}
-
-	return matrix
+	return append(matrix, readLine(line))
 }
 
 func areAdjacentsHigherThanCurrentValue(value, i int, line []int) bool {
@@ -73,7 +69,41 @@ func calcLineLowPoints(index int, matrix [][]int, lowPoints []int) []int {
 	return lowPoints
 }
 
-func readFile(test bool) []int {
+func findBasin(matrix, basinMatrix [][]int, x, y int) int {
+	if matrix[x][y] == 9 || basinMatrix[x][y] == 1 {
+		basinMatrix[x][y] = 1
+		return 0
+	}
+	basinMatrix[x][y] = 1
+
+	adjacents := 0
+	// Up
+	if y != 0 {
+		adjacents += findBasin(matrix, basinMatrix, x, y-1)
+	}
+	// Down
+	if y != len(matrix[x])-1 {
+		adjacents += findBasin(matrix, basinMatrix, x, y+1)
+	}
+	// Left
+	if x != 0 {
+		adjacents += findBasin(matrix, basinMatrix, x-1, y)
+	}
+	// Right
+	if x != len(matrix)-1 {
+		adjacents += findBasin(matrix, basinMatrix, x+1, y)
+	}
+
+	return 1 + adjacents
+}
+
+func findThreeLargestBasins(basins []int) []int {
+    sort.Ints(basins)
+
+    return basins[len(basins) - 3:]
+}
+
+func readFile(test bool) ([]int, []int) {
 	f, err := utils.GetFileToReadFrom(9, test)
 	utils.CheckError(err)
 	defer f.Close()
@@ -93,12 +123,27 @@ func readFile(test bool) []int {
 		index++
 	}
 	lowPoints = calcLineLowPoints(len(matrix)-1, matrix, lowPoints)
+	basinMatrix := make([][]int, len(matrix))
+	for x, line := range matrix {
+		basinMatrix[x] = make([]int, len(line))
+	}
+	basins := make([]int, 0)
+	for x, line := range basinMatrix {
+		for y, value := range line {
+			if value != 1 {
+				basins = append(basins, findBasin(matrix, basinMatrix, x, y))
+			}
+		}
+	}
+	fmt.Printf("Basins found %v\n", basins)
+    threeLargestBasins := findThreeLargestBasins(basins)
+	fmt.Printf("Largest basins %v\n", threeLargestBasins)
 
-	return lowPoints
+	return lowPoints, threeLargestBasins
 }
 
 func Day09(test bool) {
-	lowPoints := readFile(test)
+	lowPoints, largestBasins := readFile(test)
 
 	fmt.Printf("Low points found: %v\n", lowPoints)
 
@@ -107,5 +152,11 @@ func Day09(test bool) {
 		riskLevel += (1 + value)
 	}
 
+    basinsMultiplied := 1
+    for _, value := range largestBasins {
+        basinsMultiplied *= value
+    }
+
 	fmt.Printf("Risk level sum %d\n", riskLevel)
+	fmt.Printf("Basins multiplied %d\n", basinsMultiplied)
 }
