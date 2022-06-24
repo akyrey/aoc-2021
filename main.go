@@ -15,6 +15,7 @@ import (
 	"github.com/akyrey/aoc-2021/day07"
 	"github.com/akyrey/aoc-2021/day08"
 	"github.com/akyrey/aoc-2021/day09"
+	"github.com/akyrey/aoc-2021/day10"
 )
 
 func main() {
@@ -68,6 +69,10 @@ func main() {
 		case 9:
 			fmt.Println("Chosen day 9")
 			day09.Day09(test)
+			break
+		case 10:
+			fmt.Println("Chosen day 10")
+			day10.Day10(test)
 			break
 		default:
 			fmt.Println("Unknown day")
