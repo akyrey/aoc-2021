@@ -119,19 +119,38 @@ func performStep(flashes int, matrix [][]int) int {
 	return flashes
 }
 
+func didAllOctsFlash(matrix [][]int) bool {
+	for y := range matrix {
+		for x := range matrix[y] {
+			if matrix[y][x] != 0 {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
 func Day11(test bool) {
 	f, err := utils.GetFileToReadFrom(11, test)
 	utils.CheckError(err)
 	defer f.Close()
 
 	matrix := buildInitialMatrix(f)
-	steps := 100
+	// steps := 100
 	flashes := 0
 
 	fmt.Printf("Initial energy level: %v\n", matrix)
 
-	for step := 0; step < steps; step++ {
+	for step := 0; true; step++ {
 		flashes = performStep(flashes, matrix)
-		fmt.Printf("Energy level after %d step: %v, flashes performed %d\n", step, matrix, flashes)
+		if didAllOctsFlash(matrix) {
+			fmt.Printf("All octs flashed together: %d", step + 1)
+			break
+		}
 	}
+	// for step := 0; step < steps; step++ {
+	// 	flashes = performStep(flashes, matrix)
+	// 	fmt.Printf("Energy level after %d step: %v, flashes performed %d\n", step, matrix, flashes)
+	// }
 }
