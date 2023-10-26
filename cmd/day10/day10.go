@@ -31,7 +31,7 @@ const (
 
 var (
 	openings = []string{OPEN_PARENTHESES, OPEN_SQUARE, OPEN_CURLY, OPEN_ANGLE}
-	closings = []string{CLOSE_PARENTHESES, CLOSE_SQUARE, CLOSE_CURLY, CLOSE_ANGLE}
+	// closings = []string{CLOSE_PARENTHESES, CLOSE_SQUARE, CLOSE_CURLY, CLOSE_ANGLE}
 )
 
 func isMatchingTag(stack []string, value string) bool {

@@ -174,10 +174,6 @@ func readFile(test bool) [][]string {
 	return result
 }
 
-func readSignal(line string) []string {
-	return strings.Split(line, " ")
-}
-
 func updateOutputValues(totalOutputValues map[int]Digit, index int, value string) {
 	// fmt.Printf("Value '%s' represents %d\n", value, index)
 	if entry, present := totalOutputValues[index]; present {
