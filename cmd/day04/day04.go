@@ -1,20 +1,21 @@
-package day04
+package main
 
 import (
 	"bufio"
 	"fmt"
-	"github.com/akyrey/aoc-2021/utils"
 	"strconv"
 	"strings"
+
+	"github.com/akyrey/aoc-2021/internal"
 )
 
 func readExtractions(line string) []int {
 	split := strings.Split(line, ",")
-	extractions := make([]int, len(split), len(split))
+	extractions := make([]int, len(split))
 
 	for i, v := range split {
 		value, err := strconv.Atoi(v)
-		utils.CheckError(err)
+		internal.CheckError(err)
 		extractions[i] = value
 	}
 
@@ -28,7 +29,7 @@ func readBoardLine(line string) []int {
 	for _, v := range split {
 		if v != "" {
 			value, err := strconv.Atoi(v)
-			utils.CheckError(err)
+			internal.CheckError(err)
 			lineNumbers = append(lineNumbers, value)
 		}
 	}
@@ -37,8 +38,8 @@ func readBoardLine(line string) []int {
 }
 
 func readFile(test bool) (extractions []int, boards [][][]int) {
-	f, err := utils.GetFileToReadFrom(4, test)
-	utils.CheckError(err)
+	f, err := internal.GetFileToReadFrom(4, test)
+	internal.CheckError(err)
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
@@ -66,7 +67,7 @@ func checkWinningRow(line []int, extracted []int) bool {
 	fmt.Printf("Checking line %v with extraction %v", line, extracted)
 	rowMatched := 0
 	for _, v := range extracted {
-		if utils.Contains(line, v) {
+		if internal.Contains(line, v) {
 			rowMatched++
 			fmt.Printf(" DOES CONTAIN VALUE, matched %d\n", rowMatched)
 		}
@@ -76,7 +77,7 @@ func checkWinningRow(line []int, extracted []int) bool {
 }
 
 func invertColsAndRows(board [][]int) (inverted [][]int) {
-	inverted = make([][]int, 5, 5)
+	inverted = make([][]int, 5)
 	for col := 0; col < 5; col++ {
 		for row := 0; row < 5; row++ {
 			inverted[row] = append(inverted[row], board[col][row])
@@ -89,7 +90,7 @@ func invertColsAndRows(board [][]int) (inverted [][]int) {
 func checkWinningBoard(boards [][][]int, extracted []int, alreadyWon []int) (winners []int) {
 	winners = alreadyWon
 	for index, board := range boards {
-		if utils.Contains(winners, index) {
+		if internal.Contains(winners, index) {
 			continue
 		}
 
@@ -111,7 +112,7 @@ func calculateBoardScore(board [][]int, extracted []int) int {
 	unmarkedNumbersTotal := 0
 	for row := 0; row < 5; row++ {
 		for col := 0; col < 5; col++ {
-			if !utils.Contains(extracted, board[row][col]) {
+			if !internal.Contains(extracted, board[row][col]) {
 				unmarkedNumbersTotal += board[row][col]
 			}
 		}
@@ -122,8 +123,8 @@ func calculateBoardScore(board [][]int, extracted []int) int {
 	return unmarkedNumbersTotal * multiplier
 }
 
-func Day04(test bool) {
-	extractions, boards := readFile(test)
+func main() {
+	extractions, boards := readFile(internal.Test)
 	var extracted []int
 	var winners []int
 

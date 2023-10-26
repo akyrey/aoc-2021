@@ -1,23 +1,23 @@
-package day08
+package main
 
 import (
 	"bufio"
 	"fmt"
 	"strings"
 
-	"github.com/akyrey/aoc-2021/utils"
+	"github.com/akyrey/aoc-2021/internal"
 )
 
 type Digit struct {
 	Encoded      *string
-	EncodedBytes byte
 	Decoded      *string
-	DecodedBytes byte
 	Count        int
+	EncodedBytes byte
+	DecodedBytes byte
 }
 
 func (digit *Digit) String() string {
-	return fmt.Sprintf("Digit{Encoded: '%s', EncodedBytes: '%b', Decoded: '%s', DecodedBytes: '%b', Count: %d}", utils.StringPtrToString(digit.Encoded), digit.EncodedBytes, utils.StringPtrToString(digit.Decoded), digit.DecodedBytes, digit.Count)
+	return fmt.Sprintf("Digit{Encoded: '%s', EncodedBytes: '%b', Decoded: '%s', DecodedBytes: '%b', Count: %d}", internal.StringPtrToString(digit.Encoded), digit.EncodedBytes, internal.StringPtrToString(digit.Decoded), digit.DecodedBytes, digit.Count)
 }
 
 func displayDigitRepresentation() map[rune]byte {
@@ -106,7 +106,7 @@ func getDecodedBytes(index int) byte {
 
 func getIntFromBytes(value byte) int {
 	switch value {
-    case 0b1110111:
+	case 0b1110111:
 		// abcefg
 		return 0
 	case 0b0010010:
@@ -117,7 +117,7 @@ func getIntFromBytes(value byte) int {
 		return 2
 	case 0b1011011:
 		// acdfg
-		return 3 
+		return 3
 	case 0b0111010:
 		// bcdf
 		return 4
@@ -153,8 +153,8 @@ func getEncodedBytes(value string) byte {
 }
 
 func readFile(test bool) [][]string {
-	f, err := utils.GetFileToReadFrom(8, test)
-	utils.CheckError(err)
+	f, err := internal.GetFileToReadFrom(8, test)
+	internal.CheckError(err)
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
@@ -186,7 +186,7 @@ func updateOutputValues(totalOutputValues map[int]Digit, index int, value string
 		return
 	}
 
-	sortedVal := utils.SortString(value)
+	sortedVal := internal.SortString(value)
 	totalOutputValues[index] = Digit{
 		Decoded:      nil,
 		DecodedBytes: getDecodedBytes(index),
@@ -197,7 +197,7 @@ func updateOutputValues(totalOutputValues map[int]Digit, index int, value string
 }
 
 func decodeAllDigits(digits map[int]Digit, fiveLetters, sixLetters []string, decodedDigits map[rune]byte) map[rune]byte {
-    actualValue := representationToDisplayDigit()
+	actualValue := representationToDisplayDigit()
 	fiveLettersEncoded := make([]byte, 0)
 	sixLettersEncoded := make([]byte, 0)
 	for _, value := range fiveLetters {
@@ -289,81 +289,75 @@ func decodeSingleLine(pattern, display string) int {
 		case 2:
 			// This represents the number 1
 			updateOutputValues(outputDigits, 1, value)
-			break
 		case 3:
 			// This represents the number 7
 			updateOutputValues(outputDigits, 7, value)
-			break
 		case 4:
 			// This represents the number 4
 			updateOutputValues(outputDigits, 4, value)
-			break
 		case 5:
 			// fmt.Printf("Value with length %d %s could be a 2, 3 or 5\n", length, value)
-			sortedValue := utils.SortString(value)
-			if !utils.Contains(fiveLetters, sortedValue) {
+			sortedValue := internal.SortString(value)
+			if !internal.Contains(fiveLetters, sortedValue) {
 				fiveLetters = append(fiveLetters, sortedValue)
 			}
-			break
 		case 6:
 			// fmt.Printf("Value with length %d %s could be a 0, 6 or 9\n", length, value)
-			sortedValue := utils.SortString(value)
-			if !utils.Contains(sixLetters, sortedValue) {
+			sortedValue := internal.SortString(value)
+			if !internal.Contains(sixLetters, sortedValue) {
 				sixLetters = append(sixLetters, sortedValue)
 			}
-			break
 		case 7:
 			// This represents the number 8
 			updateOutputValues(outputDigits, 8, value)
-			break
 		}
 	}
 
 	fmt.Printf("Found 5 letters: %v\nand 6 letters: %v\n", fiveLetters, sixLetters)
 	encodedDigits = decodeAllDigits(outputDigits, fiveLetters, sixLetters, encodedDigits)
-    displayedValueToBytes := displayDigitRepresentation()
-    translatedValues := translateDecodedValues(encodedDigits)
-    
-    // decodedDigits := representationToDisplayDigit()
-    // for key, value := range decodedDigits {
-    //     fmt.Printf("%c => %b %d\n", key, value, getIntFromBytes(value))
-    // }
-    totalValue := 0
+	displayedValueToBytes := displayDigitRepresentation()
+	translatedValues := translateDecodedValues(encodedDigits)
+
+	// decodedDigits := representationToDisplayDigit()
+	// for key, value := range decodedDigits {
+	//     fmt.Printf("%c => %b %d\n", key, value, getIntFromBytes(value))
+	// }
+	totalValue := 0
 	for index, value := range displayValues {
 		currentValue := ""
 		for _, char := range value {
-            currentValue += string(translatedValues[displayedValueToBytes[char]])
+			currentValue += string(translatedValues[displayedValueToBytes[char]])
 		}
-        orderedValue := utils.SortString(currentValue)
-        encodedValue := getEncodedBytes(orderedValue)
-        intValue := getIntFromBytes(encodedValue)
-        fmt.Printf("Value: %s %s => %d\n", value, orderedValue, intValue)
-        if index == 0 {
-            totalValue += 1000 * intValue
-        } else if index == 1 {
-            totalValue += 100 * intValue
-        } else if index == 2 {
-            totalValue += 10 * intValue
-        } else if index == 3 {
-            totalValue += intValue
-        }
+		orderedValue := internal.SortString(currentValue)
+		encodedValue := getEncodedBytes(orderedValue)
+		intValue := getIntFromBytes(encodedValue)
+		fmt.Printf("Value: %s %s => %d\n", value, orderedValue, intValue)
+		if index == 0 {
+			totalValue += 1000 * intValue
+		} else if index == 1 {
+			totalValue += 100 * intValue
+		} else if index == 2 {
+			totalValue += 10 * intValue
+		} else if index == 3 {
+			totalValue += intValue
+		}
 	}
-    fmt.Printf("Total line value %d\n", totalValue)
+	fmt.Printf("Total line value %d\n", totalValue)
 
 	return totalValue
 }
 
 func translateDecodedValues(encodedDigits map[rune]byte) map[byte]rune {
-    result := make(map[byte]rune, 0)
+	result := make(map[byte]rune, 0)
 
-    for key, value := range encodedDigits {
-        result[value] = key
-    }
+	for key, value := range encodedDigits {
+		result[value] = key
+	}
 
-    return result
+	return result
 }
 
-func aggregateDigitsPerLine(readings [][]string, patterns bool) []int {
+func aggregateDigitsPerLine(readings [][]string) []int {
 	result := make([]int, 0)
 
 	for _, display := range readings {
@@ -377,15 +371,15 @@ func aggregateDigitsPerLine(readings [][]string, patterns bool) []int {
 	return result
 }
 
-func Day08(test bool) {
-	readings := readFile(test)
+func main() {
+	readings := readFile(internal.Test)
 
-	outputLines := aggregateDigitsPerLine(readings, true)
-    totalAdd := 0
+	outputLines := aggregateDigitsPerLine(readings)
+	totalAdd := 0
 
 	for _, line := range outputLines {
-        totalAdd += line
+		totalAdd += line
 	}
 
-    fmt.Printf("Adding all displayed lines gives: %d\n", totalAdd)
+	fmt.Printf("Adding all displayed lines gives: %d\n", totalAdd)
 }

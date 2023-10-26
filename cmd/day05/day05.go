@@ -1,12 +1,13 @@
-package day05
+package main
 
 import (
 	"bufio"
 	"fmt"
-	"github.com/akyrey/aoc-2021/utils"
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/akyrey/aoc-2021/internal"
 )
 
 type Point struct {
@@ -27,9 +28,9 @@ func readPoint(text string) (point Point) {
 	}
 
 	x, err := strconv.Atoi(split[0])
-	utils.CheckError(err)
+	internal.CheckError(err)
 	y, err := strconv.Atoi(split[1])
-	utils.CheckError(err)
+	internal.CheckError(err)
 
 	return Point{x, y}
 }
@@ -48,8 +49,8 @@ func readLine(line string) (start Point, end Point) {
 }
 
 func readFile(test bool) (lines []Line) {
-	f, err := utils.GetFileToReadFrom(5, test)
-	utils.CheckError(err)
+	f, err := internal.GetFileToReadFrom(5, test)
+	internal.CheckError(err)
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
@@ -138,8 +139,8 @@ func nextValue(current int, start int, end int) int {
 	return current + 1
 }
 
-func Day05(test bool) {
-	lines := readFile(test)
+func main() {
+	lines := readFile(internal.Test)
 	highestPoint := highestPoint(lines)
 	diagramLength := Point{highestPoint.x + 1, highestPoint.y + 1}
 

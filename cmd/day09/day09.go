@@ -1,4 +1,4 @@
-package day09
+package main
 
 import (
 	"bufio"
@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/akyrey/aoc-2021/utils"
+	"github.com/akyrey/aoc-2021/internal"
 )
 
 func readLine(line string) []int {
@@ -16,7 +16,7 @@ func readLine(line string) []int {
 
 	for i, stringValue := range stringValues {
 		value, err := strconv.Atoi(stringValue)
-		utils.CheckError(err)
+		internal.CheckError(err)
 
 		values[i] = value
 	}
@@ -50,11 +50,8 @@ func isCurrentValueLowPoint(value, i int, index int, matrix [][]int) bool {
 	for x := range matrix {
 		verticalLine = append(verticalLine, matrix[x][i])
 	}
-	if !areAdjacentsHigherThanCurrentValue(value, index, verticalLine) {
-		return false
-	}
 
-	return true
+	return areAdjacentsHigherThanCurrentValue(value, index, verticalLine)
 }
 
 func calcLineLowPoints(index int, matrix [][]int, lowPoints []int) []int {
@@ -98,14 +95,14 @@ func findBasin(matrix, basinMatrix [][]int, x, y int) int {
 }
 
 func findThreeLargestBasins(basins []int) []int {
-    sort.Ints(basins)
+	sort.Ints(basins)
 
-    return basins[len(basins) - 3:]
+	return basins[len(basins)-3:]
 }
 
 func readFile(test bool) ([]int, []int) {
-	f, err := utils.GetFileToReadFrom(9, test)
-	utils.CheckError(err)
+	f, err := internal.GetFileToReadFrom(9, test)
+	internal.CheckError(err)
 	defer f.Close()
 
 	lowPoints := make([]int, 0)
@@ -136,14 +133,14 @@ func readFile(test bool) ([]int, []int) {
 		}
 	}
 	fmt.Printf("Basins found %v\n", basins)
-    threeLargestBasins := findThreeLargestBasins(basins)
+	threeLargestBasins := findThreeLargestBasins(basins)
 	fmt.Printf("Largest basins %v\n", threeLargestBasins)
 
 	return lowPoints, threeLargestBasins
 }
 
-func Day09(test bool) {
-	lowPoints, largestBasins := readFile(test)
+func main() {
+	lowPoints, largestBasins := readFile(internal.Test)
 
 	fmt.Printf("Low points found: %v\n", lowPoints)
 
@@ -152,10 +149,10 @@ func Day09(test bool) {
 		riskLevel += (1 + value)
 	}
 
-    basinsMultiplied := 1
-    for _, value := range largestBasins {
-        basinsMultiplied *= value
-    }
+	basinsMultiplied := 1
+	for _, value := range largestBasins {
+		basinsMultiplied *= value
+	}
 
 	fmt.Printf("Risk level sum %d\n", riskLevel)
 	fmt.Printf("Basins multiplied %d\n", basinsMultiplied)

@@ -1,16 +1,17 @@
-package day02
+package main
 
 import (
 	"bufio"
 	"fmt"
-	"github.com/akyrey/aoc-2021/utils"
 	"strconv"
 	"strings"
+
+	"github.com/akyrey/aoc-2021/internal"
 )
 
-func Day02(test bool) {
-	f, err := utils.GetFileToReadFrom(2, test)
-	utils.CheckError(err)
+func main() {
+	f, err := internal.GetFileToReadFrom(2, internal.Test)
+	internal.CheckError(err)
 	defer f.Close()
 
 	orizontalMovements := [1]string{"forward"}
@@ -27,12 +28,12 @@ func Day02(test bool) {
 		split := strings.Split(line, " ")
 		movement := split[0]
 		value, err := strconv.Atoi(split[1])
-		utils.CheckError(err)
+		internal.CheckError(err)
 
-		if utils.Contains(orizontalMovements[:], movement) {
+		if internal.Contains(orizontalMovements[:], movement) {
 			horizontal += value
 			depth += aim * value
-		} else if utils.Contains(verticalMovements[:], movement) {
+		} else if internal.Contains(verticalMovements[:], movement) {
 			if movement == verticalMovements[0] {
 				aim -= value
 			} else {

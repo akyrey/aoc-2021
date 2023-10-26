@@ -1,16 +1,17 @@
-package day06
+package main
 
 import (
 	"bufio"
 	"fmt"
-	"github.com/akyrey/aoc-2021/utils"
 	"strconv"
 	"strings"
+
+	"github.com/akyrey/aoc-2021/internal"
 )
 
 func readFile(test bool) []int {
-	f, err := utils.GetFileToReadFrom(6, test)
-	utils.CheckError(err)
+	f, err := internal.GetFileToReadFrom(6, test)
+	internal.CheckError(err)
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
@@ -25,7 +26,7 @@ func readFile(test bool) []int {
 
 		for i, stringValue := range lanternFishesAsString {
 			value, err := strconv.Atoi(stringValue)
-			utils.CheckError(err)
+			internal.CheckError(err)
 
 			lanternFishes[i] = value
 		}
@@ -50,12 +51,12 @@ func calculateChildren(daysUntilChildren int, daysLeft int) int {
 	return acc
 }
 
-func Day06(test bool) {
-	lanternFishes := readFile(test)
+func main() {
+	lanternFishes := readFile(internal.Test)
 	totalDays := 256
 
 	// Calculate children per starting value
-	fishingMap := make([]int, 9, 9)
+	fishingMap := make([]int, 9)
 	for i := 1; i <= 8; i++ {
 		fishingMap[i] = calculateChildren(i, totalDays)
 	}

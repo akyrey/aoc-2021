@@ -1,15 +1,16 @@
-package day01
+package main
 
 import (
 	"bufio"
 	"fmt"
-	"github.com/akyrey/aoc-2021/utils"
 	"strconv"
+
+	"github.com/akyrey/aoc-2021/internal"
 )
 
-func Day01(test bool) {
-	f, err := utils.GetFileToReadFrom(1, test)
-	utils.CheckError(err)
+func main() {
+	f, err := internal.GetFileToReadFrom(1, internal.Test)
+	internal.CheckError(err)
 
 	scanner := bufio.NewScanner(f)
 	var count int
@@ -19,13 +20,13 @@ func Day01(test bool) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		currentValue, err := strconv.Atoi(line)
-		utils.CheckError(err)
+		internal.CheckError(err)
 
 		// Remove first array element
 		currentWindow = currentWindow[1:]
 		// Insert the newly read one as last element
 		currentWindow = append(currentWindow, currentValue)
-		if !utils.Contains(currentWindow, -1) {
+		if !internal.Contains(currentWindow, -1) {
 			acc := 0
 			for i := 0; i < len(currentWindow); i++ {
 				acc += currentWindow[i]

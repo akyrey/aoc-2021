@@ -1,4 +1,4 @@
-package day10
+package main
 
 import (
 	"bufio"
@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/akyrey/aoc-2021/utils"
+	"github.com/akyrey/aoc-2021/internal"
 )
 
 type Corrupted struct {
@@ -29,8 +29,10 @@ const (
 	CLOSE_ANGLE       string = ">"
 )
 
-var openings = []string{OPEN_PARENTHESES, OPEN_SQUARE, OPEN_CURLY, OPEN_ANGLE}
-var closings = []string{CLOSE_PARENTHESES, CLOSE_SQUARE, CLOSE_CURLY, CLOSE_ANGLE}
+var (
+	openings = []string{OPEN_PARENTHESES, OPEN_SQUARE, OPEN_CURLY, OPEN_ANGLE}
+	closings = []string{CLOSE_PARENTHESES, CLOSE_SQUARE, CLOSE_CURLY, CLOSE_ANGLE}
+)
 
 func isMatchingTag(stack []string, value string) bool {
 	if len(stack) == 0 {
@@ -72,8 +74,8 @@ func completeLine(stack []string) []string {
 }
 
 func readFile(test bool) ([]Corrupted, []int) {
-	f, err := utils.GetFileToReadFrom(10, test)
-	utils.CheckError(err)
+	f, err := internal.GetFileToReadFrom(10, test)
+	internal.CheckError(err)
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
@@ -87,7 +89,7 @@ func readFile(test bool) ([]Corrupted, []int) {
 		incomplete := true
 
 		for _, value := range values {
-			if utils.Contains(openings, value) {
+			if internal.Contains(openings, value) {
 				stack = append(stack, value)
 			} else if isMatchingTag(stack, value) {
 				stack = stack[:len(stack)-1]
@@ -152,8 +154,8 @@ func calcSyntaxError(corrupted []Corrupted) int {
 	return sum
 }
 
-func Day10(test bool) {
-	corrupted, completionScores := readFile(test)
+func main() {
+	corrupted, completionScores := readFile(internal.Test)
 
 	fmt.Printf("Corrupted lines: %#v\n", corrupted)
 

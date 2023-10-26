@@ -1,17 +1,18 @@
-package day07
+package main
 
 import (
 	"bufio"
 	"fmt"
-	"github.com/akyrey/aoc-2021/utils"
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/akyrey/aoc-2021/internal"
 )
 
 func readFile(test bool) []int {
-	f, err := utils.GetFileToReadFrom(7, test)
-	utils.CheckError(err)
+	f, err := internal.GetFileToReadFrom(7, test)
+	internal.CheckError(err)
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
@@ -26,7 +27,7 @@ func readFile(test bool) []int {
 
 		for i, stringValue := range positionsAsStrings {
 			value, err := strconv.Atoi(stringValue)
-			utils.CheckError(err)
+			internal.CheckError(err)
 
 			positions[i] = value
 		}
@@ -96,8 +97,8 @@ func findMaxValue(positions []int) int {
 	return max
 }
 
-func Day07(test bool) {
-	positions := readFile(test)
+func main() {
+	positions := readFile(internal.Test)
 
 	mean := calculateMeanValue(positions)
 

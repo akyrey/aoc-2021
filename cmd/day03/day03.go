@@ -1,12 +1,13 @@
-package day03
+package main
 
 import (
 	"bufio"
 	"fmt"
-	"github.com/akyrey/aoc-2021/utils"
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/akyrey/aoc-2021/internal"
 )
 
 func arrayToString(a []int, delim string) string {
@@ -33,7 +34,7 @@ func calculateRate(totalCount int, reportBitSum []int, mostCommon bool) []int {
 func calculateDecimalRate(rate []int) int {
 	binaryValue := arrayToString(rate[:], "")
 	decimalValue, err := strconv.ParseInt(binaryValue, 2, 64)
-	utils.CheckError(err)
+	internal.CheckError(err)
 
 	return int(decimalValue)
 }
@@ -59,7 +60,7 @@ func getLeastCommonBit(totalCount int, value int) int {
 }
 
 func sumReportValues(reports [][]int, length int) []int {
-	reportBitSum := make([]int, length, length)
+	reportBitSum := make([]int, length)
 
 	for _, v := range reports {
 		for i := 0; i < length; i++ {
@@ -101,9 +102,9 @@ func filterByBit(reports [][]int, length int, mostCommon bool) []int {
 	return result[0]
 }
 
-func Day03(test bool) {
-	f, err := utils.GetFileToReadFrom(3, test)
-	utils.CheckError(err)
+func main() {
+	f, err := internal.GetFileToReadFrom(3, internal.Test)
+	internal.CheckError(err)
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
@@ -117,14 +118,14 @@ func Day03(test bool) {
 		split := strings.Split(line, "")
 		length = len(split)
 		if reportBitSum == nil {
-			reportBitSum = make([]int, length, length)
+			reportBitSum = make([]int, length)
 		}
-		currentReport := make([]int, length, length)
+		currentReport := make([]int, length)
 
 		fmt.Printf("Split %v\n", split)
 		for i := 0; i < len(split); i++ {
 			value, err := strconv.Atoi(split[i])
-			utils.CheckError(err)
+			internal.CheckError(err)
 
 			reportBitSum[i] += value
 			currentReport[i] = value

@@ -1,4 +1,4 @@
-package day11
+package main
 
 import (
 	"bufio"
@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/akyrey/aoc-2021/utils"
+	"github.com/akyrey/aoc-2021/internal"
 )
 
 type Position struct {
@@ -33,7 +33,7 @@ func buildInitialMatrix(f *os.File) [][]int {
 
 		for x, value := range values {
 			octopus, err := strconv.Atoi(value)
-			utils.CheckError(err)
+			internal.CheckError(err)
 
 			matrix[y][x] = octopus
 		}
@@ -131,9 +131,9 @@ func didAllOctsFlash(matrix [][]int) bool {
 	return true
 }
 
-func Day11(test bool) {
-	f, err := utils.GetFileToReadFrom(11, test)
-	utils.CheckError(err)
+func main() {
+	f, err := internal.GetFileToReadFrom(11, internal.Test)
+	internal.CheckError(err)
 	defer f.Close()
 
 	matrix := buildInitialMatrix(f)
@@ -145,7 +145,7 @@ func Day11(test bool) {
 	for step := 0; true; step++ {
 		flashes = performStep(flashes, matrix)
 		if didAllOctsFlash(matrix) {
-			fmt.Printf("All octs flashed together: %d", step + 1)
+			fmt.Printf("All octs flashed together: %d", step+1)
 			break
 		}
 	}
